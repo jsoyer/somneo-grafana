@@ -1,0 +1,65 @@
+version: "3.8"
+
+services:
+  influxdb:
+    image: influxdb:1.12
+    container_name: somneo-influxdb
+    restart: unless-stopped
+    ports:
+      - "8086:8086"
+    environment:
+      - INFLUXDB_DB=sensors
+      - INFLUXDB_ADMIN_USER=admin
+      - INFLUXDB_ADMIN_PASSWORD=adminpassword
+      - INFLUXDB_USER=somneo
+      - INFLUXDB_USER_PASSWORD=somneopassword
+    volumes:
+      - influxdb-data:/var/lib/influxdb
+    networks:
+      - somneo-network
+
+  somneo-exporter:
+    build: .
+    container_name: somneo-exporter
+    restart: unless-stopped
+    environment:
+      - SOMNEO_HOST=192.168.1.1
+      - SOMNEO_PORT=443
+      - INFLUXDB_HOST=influxdb
+      - INFLUXDB_PORT=8086
+      - INFLUXDB_DATABASE=sensors
+      - INFLUXDB_USER=somneo
+      - INFLUXDB_PASSWORD=somneopassword
+      - SOMNEO_LOCATION=bedroom
+      - POLL_INTERVAL=1800
+    depends_on:
+      - influxdb
+    networks:
+      - somneo-network
+
+  grafana:
+    image: grafana/grafana:latest
+    container_name: somneo-grafana
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      - GF_SECURITY_ADMIN_USER=admin
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+      - GF_INSTALL_PLUGINS=
+    volumes:
+      - grafana-data:/var/lib/grafana
+      - ./grafana-datasource:/etc/grafana/provisioning/datasources
+      - ./grafana-dashboard:/etc/grafana/provisioning/dashboards
+    depends_on:
+      - influxdb
+    networks:
+      - somneo-network
+
+volumes:
+  influxdb-data:
+  grafana-data:
+
+networks:
+  somneo-network:
+    driver: bridge

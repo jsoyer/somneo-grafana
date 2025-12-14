@@ -1,0 +1,21 @@
+[project]
+name = "somneo-grafana"
+version = "0.1.0"
+description = "Somneo sensor data exporter to InfluxDB for Grafana visualization"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "requests>=2.31.0",
+    "influxdb>=5.3.1",
+    "urllib3>=2.1.0",
+]
+
+[project.scripts]
+somneo-exporter = "somneo.main:main"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.uv]
+dev-dependencies = []
