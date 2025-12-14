@@ -17,5 +17,16 @@ somneo-exporter = "somneo.main:main"
 requires = ["hatchling"]
 build-backend = "hatchling.build"
 
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+norecursedirs = ["lib", "bin", "include", ".venv", "venv", "node_modules"]
+filterwarnings = [
+    "ignore::DeprecationWarning:influxdb.*",
+]
+
 [tool.uv]
-dev-dependencies = []
+dev-dependencies = [
+    "pytest>=7.4.0",
+    "requests-mock>=1.11.0",
+    "mock>=5.0.0",
+]

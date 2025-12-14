@@ -61,3 +61,6 @@ bin/pip3.13
 bin/python
 bin/python3
 bin/python3.13
+bin/py.test
+bin/pygmentize
+bin/pytest
